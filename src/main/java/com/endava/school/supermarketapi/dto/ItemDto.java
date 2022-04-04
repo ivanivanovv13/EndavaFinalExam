@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Enumerated;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Getter
 @Setter
@@ -20,6 +19,8 @@ public class ItemDto {
     @Size(max = 64)
     private String name;
     @NotNull
+    @DecimalMax("9999.99")
+    @DecimalMin("0.01")
     private double price;
     @NotNull
     @Enumerated
