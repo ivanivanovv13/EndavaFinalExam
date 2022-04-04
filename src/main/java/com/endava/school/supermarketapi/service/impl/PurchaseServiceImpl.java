@@ -83,7 +83,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public void writePurchaseToCSV() throws IOException {
         List<Purchase> purchases = purchaseRepository.findAll();
-        File file = new File("books.csv");
+        File file = new File("purchase.csv");
         file.createNewFile();
         try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.DEFAULT)) {
             for (Purchase purchase : purchases) {
