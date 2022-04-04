@@ -16,6 +16,7 @@
     <properties>
         <java.version>18</java.version>
         <model.mapper.version>2.4.5</model.mapper.version>
+        <commons.csv.version>1.8</commons.csv.version>
     </properties>
     <dependencies>
         <dependency>
@@ -50,6 +51,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>${commons.csv.version}</version>
         </dependency>
     </dependencies>
 

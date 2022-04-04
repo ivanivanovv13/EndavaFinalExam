@@ -7,6 +7,8 @@ import com.endava.school.supermarketapi.dto.addItemsToSupermarketDtoResponse;
 
 public interface SupermarketService {
     SupermarketDto addSupermarket(SupermarketDto supermarketDto);
-    addItemsToSupermarketDtoResponse  addItemsToSupermarket(addItemsToSupermarketDto addItemsToSupermarketDto);
+
+    addItemsToSupermarketDtoResponse addItemsToSupermarket(addItemsToSupermarketDto addItemsToSupermarketDto);
+
     SupermarketDtoResponse getSupermarketById(String supermarketId);
 }
