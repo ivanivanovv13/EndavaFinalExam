@@ -26,6 +26,8 @@ public class PurchaseDtoResponse {
     @NotNull
     @Enumerated
     private PaymentType paymentType;
+    private  double totalCashAmount;
+    private double moneyGiven;
     private double change;
     private LocalTime timeOfPayment;
 }

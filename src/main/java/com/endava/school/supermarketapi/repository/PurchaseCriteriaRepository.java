@@ -1,6 +1,5 @@
 package com.endava.school.supermarketapi.repository;
 
-import com.endava.school.supermarketapi.dto.PurchaseDto;
 import com.endava.school.supermarketapi.model.*;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
@@ -42,20 +41,49 @@ public class PurchaseCriteriaRepository {
 
     private Predicate getPredicate(PurchaseSearchCriteria purchaseSearchCriteria, Root<Purchase> purchaseRoot) {
         List<Predicate> predicates = new ArrayList<>();
-        if (Objects.nonNull(purchaseSearchCriteria.getPayment_type())) {
-            predicates.add(criteriaBuilder.like(purchaseRoot.get("paymentType"), "%" + purchaseSearchCriteria.getPayment_type() + "%"));
+        if (Objects.nonNull(purchaseSearchCriteria.getPaymentType())) {
+            predicates.add(criteriaBuilder.equal(purchaseRoot.get("paymentType"), purchaseSearchCriteria.getPaymentType()));
         }
-        if (Objects.nonNull(purchaseSearchCriteria.getCash_amount())) {
-            predicates.add(criteriaBuilder.equal(purchaseRoot.get("cashAmount"), purchaseSearchCriteria.getCash_amount()));
+        if (purchaseSearchCriteria.getTotalCashAmount() != 0) {
+            predicates.add(criteriaBuilder.equal(purchaseRoot.get("totalCashAmount"), purchaseSearchCriteria.getTotalCashAmount()));
         }
-        if (Objects.nonNull(purchaseSearchCriteria.getItem_id())) {
-            Join<Purchase, Item> joinBook = purchaseRoot.joinList("items");
-            predicates.add(criteriaBuilder.like(joinBook.get("items"), "%" + purchaseSearchCriteria.getItem_id() + "%"));
+        if (Objects.nonNull(purchaseSearchCriteria.getItemId())) {
+            Join<Purchase, Item> joinItem = purchaseRoot.joinList("items");
+            predicates.add(criteriaBuilder.equal(joinItem.get("id"), purchaseSearchCriteria.getItemId()));
         }
-        if (Objects.nonNull(purchaseSearchCriteria.getSupermarket_id())) {
-            Join<Purchase, Supermarket> joinBook = purchaseRoot.joinList("supermarket");
-            predicates.add(criteriaBuilder.like(joinBook.get("supermarket"), "%" + purchaseSearchCriteria.getSupermarket_id() + "%"));
+        if (Objects.nonNull(purchaseSearchCriteria.getItemName())) {
+            Join<Purchase, Item> joinItem = purchaseRoot.joinList("items");
+            predicates.add(criteriaBuilder.like(joinItem.get("name"), "%" + purchaseSearchCriteria.getItemName() + "%"));
         }
+        if (purchaseSearchCriteria.getItemPrice() != 0) {
+            Join<Purchase, Item> joinItem = purchaseRoot.joinList("items");
+            predicates.add(criteriaBuilder.equal(joinItem.get("price"), purchaseSearchCriteria.getItemPrice()));
+        }
+        if (Objects.nonNull(purchaseSearchCriteria.getItemType())) {
+            Join<Purchase, Item> joinItem = purchaseRoot.joinList("items");
+            predicates.add(criteriaBuilder.equal(joinItem.get("itemType"), purchaseSearchCriteria.getItemType()));
+        }
+        if (Objects.nonNull(purchaseSearchCriteria.getSupermarketId())) {
+            Join<Purchase, Supermarket> joinSupermarket = purchaseRoot.join("supermarket");
+            predicates.add(criteriaBuilder.equal(joinSupermarket.get("id"), purchaseSearchCriteria.getSupermarketId()));
+        }
+        if (Objects.nonNull(purchaseSearchCriteria.getSupermarketName())) {
+            Join<Purchase, Supermarket> joinSupermarket = purchaseRoot.join("supermarket");
+            predicates.add(criteriaBuilder.equal(joinSupermarket.get("name"), purchaseSearchCriteria.getSupermarketName()));
+        }
+        if (Objects.nonNull(purchaseSearchCriteria.getSupermarketPhoneNumber())) {
+            Join<Purchase, Supermarket> joinSupermarket = purchaseRoot.join("supermarket");
+            predicates.add(criteriaBuilder.equal(joinSupermarket.get("phoneNumber"), purchaseSearchCriteria.getSupermarketPhoneNumber()));
+        }
+        if (Objects.nonNull(purchaseSearchCriteria.getSupermarketAddress())) {
+            Join<Purchase, Supermarket> joinSupermarket = purchaseRoot.join("supermarket");
+            predicates.add(criteriaBuilder.equal(joinSupermarket.get("address"), purchaseSearchCriteria.getSupermarketAddress()));
+        }
+        if (Objects.nonNull(purchaseSearchCriteria.getSupermarketName())) {
+            Join<Purchase, Supermarket> joinSupermarket = purchaseRoot.join("supermarket");
+            predicates.add(criteriaBuilder.equal(joinSupermarket.get("workHours"), purchaseSearchCriteria.getSupermarketWorkHours()));
+        }
+
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }

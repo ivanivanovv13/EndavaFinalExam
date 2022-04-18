@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/supermarkets")
 public class SupermarketController {
@@ -21,7 +23,7 @@ public class SupermarketController {
     }
 
     @PostMapping("/create-supermarket")
-    public ResponseEntity<SupermarketDto> createSupermarket(@RequestBody SupermarketDto supermarketDto) {
+    public ResponseEntity<SupermarketDto> createSupermarket(@Valid @RequestBody SupermarketDto supermarketDto) {
         return new ResponseEntity<>(supermarketService.addSupermarket(supermarketDto), HttpStatus.CREATED);
     }
 
@@ -30,7 +32,7 @@ public class SupermarketController {
         return new ResponseEntity<>(supermarketService.addItemsToSupermarket(addItemsToSupermarketDto), HttpStatus.OK);
     }
 
-    @GetMapping("/get-supermarket-by-id{supermarketId}")
+    @GetMapping("/get-supermarket-by-id/{supermarketId}")
     public ResponseEntity<SupermarketDtoResponse> getSupermarketById(@PathVariable(required = true, value = "supermarketId") String supermarketId) {
         return new ResponseEntity<>(supermarketService.getSupermarketById(supermarketId), HttpStatus.OK);
     }

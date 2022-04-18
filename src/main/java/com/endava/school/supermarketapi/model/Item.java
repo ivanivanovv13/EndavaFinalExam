@@ -33,6 +33,4 @@ public class Item {
     @NotNull
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
-    @ManyToMany(mappedBy = "items")
-    private List<Supermarket> supermarkets;
 }

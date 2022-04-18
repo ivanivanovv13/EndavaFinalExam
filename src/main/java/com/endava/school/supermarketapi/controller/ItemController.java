@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 
 @RestController
 @RequestMapping("/items")
@@ -22,7 +24,7 @@ public class ItemController {
     }
 
     @PostMapping("/create-item")
-    public ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto) {
+    public ResponseEntity<ItemDto> createItem(@Valid @RequestBody ItemDto itemDto) {
         return new ResponseEntity<>(itemService.addItem(itemDto), HttpStatus.CREATED);
     }
 }

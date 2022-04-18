@@ -11,6 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -27,7 +28,7 @@ public class Purchase {
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "supermarket_id")
-    private Supermarket superMarketId;
+    private Supermarket supermarket;
     @NotEmpty
     @ManyToMany(cascade = CascadeType.ALL)
     @Column(name = "item")
@@ -36,6 +37,10 @@ public class Purchase {
     @Column(name = "payment_type")
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
-    @Column(name = "cash_amount")
-    private double cashAmount;
+    @Column(name = "total_cash_amount")
+    private double totalCashAmount;
+    @Column(name = "money_given")
+    private double moneyGiven;
+    @Column(name="time_of_payment")
+    private LocalTime timeOfPayment;
 }

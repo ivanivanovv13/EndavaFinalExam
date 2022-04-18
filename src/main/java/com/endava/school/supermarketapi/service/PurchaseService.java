@@ -7,14 +7,15 @@ import com.endava.school.supermarketapi.model.PurchaseSearchCriteria;
 import org.springframework.data.domain.Page;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 
 public interface PurchaseService {
     PurchaseDtoResponse buyItemsFromSupermarket(PurchaseDto purchaseDto);
 
-    List<PurchaseDto> getAll();
+    List<PurchaseDtoResponse> getAllPurchases();
 
-    void writePurchaseToCSV() throws IOException;
+    void writePurchaseToCSV(Writer writer) throws IOException;
 
-    Page<PurchaseDto> findAllFileteredPurchases(PurchasePage purchasePage, PurchaseSearchCriteria purchaseSearchCriteria);
+    Page<PurchaseDtoResponse> findAllFilteredPurchases(PurchasePage purchasePage, PurchaseSearchCriteria purchaseSearchCriteria);
 }

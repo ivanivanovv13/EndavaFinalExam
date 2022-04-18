@@ -20,9 +20,9 @@ import static com.endava.school.supermarketapi.common.ExceptionMessages.SUPERMAR
 
 @Service
 public class SupermarketServiceImpl implements SupermarketService {
-    private SupermarketRepository supermarketRepository;
-    private ItemRepository itemRepository;
-    private ModelMapper modelMapper;
+    private final SupermarketRepository supermarketRepository;
+    private final ItemRepository itemRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
     public SupermarketServiceImpl(SupermarketRepository supermarketRepository, ItemRepository itemRepository) {
@@ -40,32 +40,24 @@ public class SupermarketServiceImpl implements SupermarketService {
 
     @Override
     public addItemsToSupermarketDtoResponse addItemsToSupermarket(addItemsToSupermarketDto addItemsToSupermarketDto) {
-        Supermarket supermarket = supermarketRepository.findById(addItemsToSupermarketDto.getSupermarketId())
-                .orElseThrow(() -> new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
+        Supermarket supermarket = supermarketRepository.findById(addItemsToSupermarketDto.getSupermarketId()).orElseThrow(() -> new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
         List<Item> items = findItemsByIdFromList(addItemsToSupermarketDto.getItemIds());
         supermarket.setItems(items);
         Supermarket savedSupermarket = supermarketRepository.save(supermarket);
-        return new addItemsToSupermarketDtoResponse(savedSupermarket.getId(),
-                getItemsNamesFromList(supermarket.getItems()));
+        return new addItemsToSupermarketDtoResponse(savedSupermarket.getId(), getItemsNamesFromList(supermarket.getItems()));
     }
 
     @Override
     public SupermarketDtoResponse getSupermarketById(String supermarketId) {
-        Supermarket supermarket = supermarketRepository.findById(supermarketId)
-                .orElseThrow(() -> new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
+        Supermarket supermarket = supermarketRepository.findById(supermarketId).orElseThrow(() -> new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
         List<ItemDto> itemsDto = mapItemsToItemsDto(supermarket.getItems());
-        return new SupermarketDtoResponse(supermarket.getName()
-                , supermarket.getAddress(),
-                supermarket.getPhoneNumber(),
-                supermarket.getWorkHours(),
-                itemsDto);
+        return new SupermarketDtoResponse(supermarket.getName(), supermarket.getAddress(), supermarket.getPhoneNumber(), supermarket.getWorkHours(), itemsDto);
     }
 
     private List<Item> findItemsByIdFromList(List<String> listOfItemsIds) {
         List<Item> items = new ArrayList<>();
         for (String itemId : listOfItemsIds) {
-            Item item = itemRepository.findById(itemId)
-                    .orElseThrow(() -> new ItemNotFoundException(ITEM_NOT_FOUND));
+            Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(ITEM_NOT_FOUND));
             items.add(item);
         }
         return items;

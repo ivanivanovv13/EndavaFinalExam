@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.*;
 
@@ -23,6 +24,6 @@ public class ItemDto {
     @DecimalMin("0.01")
     private double price;
     @NotNull
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private ItemType itemType;
 }

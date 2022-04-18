@@ -21,9 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +38,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final ItemRepository itemRepository;
     private final PurchaseCriteriaRepository purchaseCriteriaRepository;
     private final ModelMapper modelMapper;
+    private final String csvHeader = "Supermarket name, Supermarket address, Supermarket working hours, Supermarket phone number, Item name,Item price, Item type,Total money,Given money,Change,Time of payment";
 
     @Autowired
     public PurchaseServiceImpl(PurchaseRepository purchaseRepository, SupermarketRepository supermarketRepository, ItemRepository itemRepository, PurchaseCriteriaRepository purchaseCriteriaRepository) {
@@ -54,61 +54,61 @@ public class PurchaseServiceImpl implements PurchaseService {
         Supermarket supermarket = supermarketRepository.findById(purchaseDto.getSuperMarketId())
                 .orElseThrow(() -> new SupermarketNotFoundException(SUPERMARKET_NOT_FOUND));
         List<Item> items = findItemsByIdFromList(purchaseDto.getItemsIds());
-        LocalTime timeOfPayment = LocalTime.now();
-        Purchase newPurchase = purchaseRepository.save(new Purchase(UUID.randomUUID().toString(),
-                supermarket,
-                items,
-                purchaseDto.getPaymentType(),
-                calculateTotalAmount(items)));
-        return new PurchaseDtoResponse(modelMapper.map(supermarket, SupermarketDto.class),
-                mapItemsToItemsDto(items),
-                purchaseDto.getPaymentType(),
-                calculateTheChange(purchaseDto.getCashAmount(), calculateTotalAmount(items)),
-                timeOfPayment);
+        Purchase newPurchase = purchaseRepository.save(
+                new Purchase(UUID.randomUUID().toString(),
+                        supermarket,
+                        items,
+                        purchaseDto.getPaymentType(),
+                        calculateTotalAmount(items),
+                        purchaseDto.getCashAmount(),
+                        LocalTime.now()));
+        return getPurchaseDtoResponse(newPurchase);
     }
 
     @Override
-    public List<PurchaseDto> getAll() {
-        List<Purchase> purchases = purchaseRepository.findAll();
-        List<PurchaseDto> purchaseDtos = new ArrayList<>();
-        for (Purchase purchase : purchases) {
-            List<String> itemsIds = mapItemsToString(purchase.getItems());
-            PurchaseDto purchaseDto = modelMapper.map(purchase, PurchaseDto.class);
-            purchaseDto.setItemsIds(itemsIds);
-            purchaseDtos.add(purchaseDto);
-        }
-        return purchaseDtos;
+    public List<PurchaseDtoResponse> getAllPurchases() {
+        return purchaseRepository
+                .findAll()
+                .stream()
+                .map(purchase -> getPurchaseDtoResponse(purchase))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void writePurchaseToCSV() throws IOException {
+    public void writePurchaseToCSV(Writer writer) throws IOException {
         List<Purchase> purchases = purchaseRepository.findAll();
-        File file = new File("purchase.csv");
-        file.createNewFile();
-        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file), CSVFormat.DEFAULT)) {
+        try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+            csvPrinter.printRecord(csvHeader);
             for (Purchase purchase : purchases) {
-                csvPrinter.printRecord(purchase.getSuperMarketId(),
-                        purchase.getCashAmount(),
+                csvPrinter.printRecord(purchase.getSupermarket().getName(),
+                        purchase.getSupermarket().getAddress(),
+                        purchase.getSupermarket().getWorkHours(),
+                        purchase.getSupermarket().getPhoneNumber(),
+                        purchase.getItems().stream().map(item -> item.getName() + "," + item.getPrice() + "," + item.getItemType()).collect(Collectors.joining(",")),
                         purchase.getPaymentType(),
-                        purchase.getItems().stream().map(item -> item.getId()).collect(Collectors.toList()));
+                        purchase.getTotalCashAmount(),
+                        purchase.getMoneyGiven(),
+                        calculateTheChange(purchase.getMoneyGiven(), purchase.getTotalCashAmount()),
+                        purchase.getTimeOfPayment());
             }
         }
     }
 
     @Override
-    public Page<PurchaseDto> findAllFileteredPurchases(PurchasePage purchasePage, PurchaseSearchCriteria purchaseSearchCriteria) {
-        Page<PurchaseDto> purchasesDto = new PageImpl<>(purchaseCriteriaRepository.findAllWithFilters(purchasePage, purchaseSearchCriteria).
-                stream().map(user -> modelMapper.map(user, PurchaseDto.class)).collect(Collectors.toList()));
+    public Page<PurchaseDtoResponse> findAllFilteredPurchases(PurchasePage purchasePage, PurchaseSearchCriteria purchaseSearchCriteria) {
+        Page<PurchaseDtoResponse> purchasesDto = new PageImpl<>(purchaseCriteriaRepository.findAllWithFilters(purchasePage, purchaseSearchCriteria).
+                stream().map(purchase->getPurchaseDtoResponse(purchase)).collect(Collectors.toList()));
         return purchasesDto;
     }
 
-
-    private List<String> mapItemsToString(List<Item> items) {
-        List<String> itemsToString = new ArrayList();
-        for (Item item : items) {
-            itemsToString.add(item.getId());
-        }
-        return itemsToString;
+    private PurchaseDtoResponse getPurchaseDtoResponse(Purchase purchase) {
+        return new PurchaseDtoResponse(modelMapper.map(purchase.getSupermarket(), SupermarketDto.class),
+                mapItemsToItemsDto(purchase.getItems()),
+                purchase.getPaymentType(),
+                purchase.getTotalCashAmount(),
+                purchase.getMoneyGiven(),
+                calculateTheChange(purchase.getMoneyGiven(), purchase.getTotalCashAmount()),
+                purchase.getTimeOfPayment());
     }
 
     private List<ItemDto> mapItemsToItemsDto(List<Item> items) {
