@@ -1,5 +1,7 @@
 package com.endava.school.supermarketapi.dto;
 
+import com.endava.school.supermarketapi.anotation.EnumValidator;
+import com.endava.school.supermarketapi.anotation.EnumValidatorConstraint;
 import com.endava.school.supermarketapi.common.enums.ItemType;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.Setter;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.Constraint;
 import javax.validation.constraints.*;
 
 @Getter
@@ -24,6 +27,6 @@ public class ItemDto {
     @DecimalMin("0.01")
     private double price;
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private ItemType itemType;
+    @EnumValidatorConstraint(enumClass = ItemType.class)
+    private String itemType;
 }

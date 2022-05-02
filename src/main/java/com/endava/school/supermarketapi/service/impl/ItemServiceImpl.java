@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ItemServiceImpl implements ItemService {
-    private ItemRepository itemRepository;
-    private ModelMapper modelMapper;
+    private final ItemRepository itemRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
     public ItemServiceImpl(ItemRepository itemRepository) {

@@ -1,12 +1,12 @@
 package com.endava.school.supermarketapi.dto;
 
+import com.endava.school.supermarketapi.anotation.EnumValidatorConstraint;
 import com.endava.school.supermarketapi.common.enums.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -22,8 +22,8 @@ public class PurchaseDto {
     @NotEmpty
     private List<String> itemsIds;
     @NotNull
-    @Enumerated
-    private PaymentType paymentType;
+    @EnumValidatorConstraint(enumClass = PaymentType.class)
+    private String paymentType;
     private double cashAmount;
 
 }

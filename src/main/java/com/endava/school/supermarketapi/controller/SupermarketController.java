@@ -28,7 +28,7 @@ public class SupermarketController {
     }
 
     @PostMapping("/add-items-to-supermarket")
-    public ResponseEntity<addItemsToSupermarketDtoResponse> addItemsToSupermarket(@RequestBody addItemsToSupermarketDto addItemsToSupermarketDto) {
+    public ResponseEntity<addItemsToSupermarketDtoResponse> addItemsToSupermarket(@Valid @RequestBody addItemsToSupermarketDto addItemsToSupermarketDto) {
         return new ResponseEntity<>(supermarketService.addItemsToSupermarket(addItemsToSupermarketDto), HttpStatus.OK);
     }
 

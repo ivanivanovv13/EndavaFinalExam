@@ -1,5 +1,6 @@
 package com.endava.school.supermarketapi.service.impl;
 
+import com.endava.school.supermarketapi.common.enums.PaymentType;
 import com.endava.school.supermarketapi.dto.ItemDto;
 import com.endava.school.supermarketapi.dto.PurchaseDto;
 import com.endava.school.supermarketapi.dto.PurchaseDtoResponse;
@@ -58,7 +59,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                 new Purchase(UUID.randomUUID().toString(),
                         supermarket,
                         items,
-                        purchaseDto.getPaymentType(),
+                        PaymentType.valueOf(purchaseDto.getPaymentType()),
                         calculateTotalAmount(items),
                         purchaseDto.getCashAmount(),
                         LocalTime.now()));
@@ -70,7 +71,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         return purchaseRepository
                 .findAll()
                 .stream()
-                .map(purchase -> getPurchaseDtoResponse(purchase))
+                .map(this::getPurchaseDtoResponse)
                 .collect(Collectors.toList());
     }
 
